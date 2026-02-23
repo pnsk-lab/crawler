@@ -19,7 +19,8 @@ type
 	PThreadParams = ^TThreadParams;
 
 const
-	MaxLimits : Integer = 16;
+	MaxLimits : Integer = 20;
+	MaxThreads : Integer = 64;
 
 var
 	Finished : Integer;
@@ -34,9 +35,9 @@ begin
 
 	Dispose(Params);
 
-	ThreadEntry := 0;
-
 	InterLockedIncrement(Finished);
+
+	ThreadEntry := 0;
 end;
 
 procedure CrawlUserGet(UserName : String);
@@ -45,10 +46,14 @@ var
 	JData, JItem, JID : TJSONData;
 	N : Integer;
 	I : Integer;
-	Params : PThreadParams;
+	Param : PThreadParams;
+	Params : Array of PThreadParams;
 begin
 	N := 0;
 
+	SetLength(Params, 0);
+
+	WriteLn('[' + UserName + '] Populating...');
 	while true do
 	begin
 		while true do
@@ -67,7 +72,6 @@ begin
 			break;
 		end;
 
-		Finished := 0;
 		for I := 0 to JData.Count - 1 do
 		begin
 			JItem := JData.Items[I];
@@ -75,18 +79,28 @@ begin
 
 			if Assigned(JID) then
 			begin
-				New(Params);
-				Params^.ID := JID.AsString;
+				New(Param);
+				Param^.ID := JID.AsString;
 
-				BeginThread(@ThreadEntry, Params);
+				Insert(Param, Params, Length(Params));
 			end;
 		end;
-		while Finished < JData.Count do;
 
 		JData.Free();
 
 		N := N + MaxLimits;
 	end;
+	
+	Finished := MaxThreads;
+	for I := 0 to Length(Params) - 1 do
+	begin
+		Finished := Finished - 1;
+
+		BeginThread(@ThreadEntry, Params[I]);
+
+		while Finished = 0 do;
+	end;
+	while not(Finished = MaxThreads) do;
 end;
 
 end.
