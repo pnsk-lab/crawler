@@ -1,7 +1,7 @@
 unit CrawlProject;
 
 interface
-procedure CrawlProjectGet(ID : String; Token: String);
+procedure CrawlProjectGet(ID : String; DT : String; Token: String);
 procedure CrawlProjectGet(ID : String);
 
 implementation
@@ -11,7 +11,8 @@ uses
 	fpjson,
 	jsonparser,
 	sysutils,
-	classes;
+	classes,
+	dateutils;
 
 procedure ProjectTargetIteration(ID : String; JTarget : TJSONData; IterationName : String);
 var
@@ -56,7 +57,7 @@ begin
 	ProjectTargetIteration(ID, JTarget, 'sounds');
 end;
 
-procedure CrawlProjectGet(ID : String; Token: String);
+procedure CrawlProjectGet(ID : String; DT : String; Token: String);
 var
 	JStr : String;
 	JData, JTargets, JTarget : TJSONData;
@@ -76,9 +77,11 @@ begin
 
 	WriteLn('[' + ID + '] Got project.json');
 
-	CreateDir(ID);
+	CreateDir('projects');
+	CreateDir('projects/' + ID);
+	CreateDir('projects/' + ID + '/' + DT);
 
-	AssignFile(ProjectJSON, ID + '/project.json');
+	AssignFile(ProjectJSON, 'projects/' + ID + '/' + DT + '/project.json');
 	Rewrite(ProjectJSON);
 	Write(ProjectJSON, JStr);
 	CloseFile(ProjectJSON);
@@ -99,10 +102,11 @@ end;
 
 procedure CrawlProjectGet(ID : String);
 var
-	JData, JToken : TJSONData;
-	JObj : TJSONObject;
+	JData, JToken, JDate : TJSONData;
 	JStr : String;
 	MetaJSON : TextFile;
+	DT : TDateTime;
+	BadDT : TDateTime;
 begin
 	while true do
 	begin
@@ -114,20 +118,35 @@ begin
 		break;
 	end;
 	JData := GetJSON(JStr);
-	JObj := JData as TJSONObject;
 
-	JToken := JObj.FindPath('project_token');
+	TryISOStrToDateTime('2026-01-22T00:00Z', BadDT);
+
+	JToken := JData.FindPath('project_token');
 	if Assigned(JToken) then
 	begin
-		CreateDir(ID);
+		JDate := JData.FindPath('history.modified');
+		if Assigned(JDate) then
+		begin
+			TryISOStrToDateTime(JDate.AsString, DT);
+			if CompareDateTime(DT, BadDT) <= 0 then
+			begin
+				CreateDir('projects');
+				CreateDir('projects/' + ID);
+				CreateDir('projects/' + ID + '/' + JDate.AsString);
 
-		AssignFile(MetaJSON, ID + '/meta.json');
-		Rewrite(MetaJSON);
-		Write(MetaJSON, JStr);
-		CloseFile(MetaJSON);
+				AssignFile(MetaJSON, 'projects/' + ID + '/' + JDate.AsString + '/metadata.json');
+				Rewrite(MetaJSON);
+				Write(MetaJSON, JStr);
+				CloseFile(MetaJSON);
 
-		WriteLn('[' + ID + '] Got projcet token');
-		CrawlProjectGet(ID, JToken.AsString);
+				WriteLn('[' + ID + '] Got project token');
+				CrawlProjectGet(ID, JDate.AsString, JToken.AsString);
+			end
+			else
+			begin
+				WriteLn('[' + ID + '] Project is too new - ignoring');
+			end;
+		end;
 	end;
 	
 	JData.Free();
