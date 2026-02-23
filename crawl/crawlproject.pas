@@ -10,20 +10,52 @@ uses
 	opensslsockets,
 	fpjson,
 	jsonparser,
-	sysutils;
+	sysutils,
+	classes;
+
+procedure ProjectTargetIteration(ID : String; JTarget : TJSONData; IterationName : String);
+var
+	JIterations, JIteration, JMD5Ext : TJSONData;
+	I : Integer;
+	FS : TFileStream;
+begin
+	JIterations := JTarget.FindPath(IterationName);
+
+	if Assigned(JIterations) then
+	begin
+		for I := 0 to JIterations.Count - 1 do
+		begin
+			JIteration := JIterations.Items[I];
+
+			JMD5Ext := JIteration.FindPath('md5ext');
+			if Assigned(JMD5Ext) then
+			begin
+				FS := TFileStream.Create(ID + '/' + JMD5Ext.AsString, fmCreate or fmOpenWrite);
+				WriteLn('[' + ID + '] Got ' + Copy(IterationName, 0, Length(IterationName) - 1) + ' ' + JMD5Ext.AsString);
+				TFPHttpClient.SimpleGet('https://cdn.assets.scratch.mit.edu/internalapi/asset/' + JMD5Ext.AsString + '/get', FS);
+				FS.Free();
+			end;
+		end;
+	end;
+end;
+
+procedure ProjectTarget(ID : String; JTarget : TJSONData);
+begin
+	ProjectTargetIteration(ID, JTarget, 'costumes');
+	ProjectTargetIteration(ID, JTarget, 'sounds');
+end;
 
 procedure CrawlProjectGet(ID : String; Token: String);
 var
 	JStr : String;
-	JData : TJSONData;
-	JObj : TJSONObject;
+	JData, JTargets, JTarget : TJSONData;
 	ProjectJSON : TextFile;
+	I : Integer;
 begin
 	JStr := TFPHttpClient.SimpleGet('https://projects.scratch.mit.edu/' + ID + '?token=' + Token);
 	JData := GetJSON(JStr);
-	JObj := JData as TJSONObject;
 
-	WriteLn('Got project.json for ' + ID);
+	WriteLn('[' + ID + '] Got project.json');
 
 	CreateDir(ID);
 
@@ -31,6 +63,17 @@ begin
 	Rewrite(ProjectJSON);
 	Write(ProjectJSON, JStr);
 	CloseFile(ProjectJSON);
+
+	JTargets := JData.FindPath('targets');
+	if Assigned(JTargets) then
+	begin
+		for I := 0 to JTargets.Count - 1 do
+		begin
+			JTarget := JTargets.Items[I];
+			
+			ProjectTarget(ID, JTarget);
+		end;
+	end;
 	
 	JData.Free();
 end;
@@ -56,7 +99,7 @@ begin
 		Write(MetaJSON, JStr);
 		CloseFile(MetaJSON);
 
-		WriteLn('Got projcet token for ' + ID);
+		WriteLn('[' + ID + '] Got projcet token');
 		CrawlProjectGet(ID, JToken.AsString);
 	end;
 	
