@@ -12,9 +12,13 @@ uses
 	CrawlServerExtension;
 
 procedure CrawlServerRootRoute(Req : TRequest; Res : TResponse);
+var
+	Path : String;
 begin
-	Res.ContentType := CrawlServerExtensionGet('dynamic/index.html');
-	CrawlServerSideProcess(Res, 'dynamic/index.html');
+	Path := 'dynamic' + Req.PathInfo + '/index.html';
+
+	Res.ContentType := CrawlServerExtensionGet(Path);
+	CrawlServerSideProcess(Res, Path);
 end;
 
 end.

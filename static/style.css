@@ -1,0 +1,60 @@
+body {
+	padding: 0;
+	margin: 0;
+	font-family: Arial, sans-serif;
+}
+
+#breadcrumb {
+	background-color: #600000;
+	font-weight: bold;
+	color: #fff;
+	padding-left: 8px;
+	padding-top: 2px;
+	padding-bottom: 2px;
+}
+
+#nav {
+	background-color: #eeeeee;
+	border-right: solid 1px #aaaaaa;
+	border-bottom: solid 1px #aaaaaa;
+	padding: 8px;
+}
+
+#content {
+	padding: 8px;
+}
+
+.section {
+	background-color: #eeeeee;
+	padding-left: 8px;
+	font-weight: bold;
+	color: #000088;
+}
+
+a {
+	text-decoration: none;
+}
+
+#breadcrumb a {
+	color: #ffff44;
+}
+
+a:link {
+	color: #003366;
+}
+
+a:visited {
+	color: blue;
+}
+
+a:hover, #breadcrumb a:hover {
+	color: #ff3300;
+}
+
+.linkgroup {
+	padding-left: 16px;
+}
+
+.linkgrouptitle {
+	font-weight: bold;
+}

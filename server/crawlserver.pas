@@ -56,7 +56,7 @@ begin
 		I := I + 1;
 	end;
 
-	HTTPRouter.RegisterRoute('/', @CrawlServerRootRoute);
+	HTTPRouter.RegisterRoute('/', @CrawlServerRootRoute, true);
 	HTTPRouter.RegisterRoute('/data/assets/:file', @CrawlServerDataAssetsRoute);
 	HTTPRouter.RegisterRoute('/data/projects/:id/:timestamp/:file', @CrawlServerDataProjectsRoute);
 	HTTPRouter.RegisterRoute('/static/:file', @CrawlServerStaticRoute);

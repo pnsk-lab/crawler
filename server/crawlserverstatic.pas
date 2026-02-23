@@ -10,10 +10,12 @@ implementation
 uses
 	classes,
 	sysutils,
-	CrawlServerExtension;
+	CrawlServerExtension,
+	CrawlServerUtil;
 
 procedure CrawlServerStaticRoute(Req : TRequest; Res : TResponse);
 begin
+	CrawlServerUtilHeader(Res, 'static/' + Req.RouteParams['file']);
 	Res.ContentType := CrawlServerExtensionGet(Req.RouteParams['file']);
 	Res.ContentStream := TFileStream.Create('static/' + Req.RouteParams['file'], fmOpenRead or fmShareDenyWrite);
 end;
