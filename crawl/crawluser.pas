@@ -94,7 +94,7 @@ begin
 	Finished := MaxThreads;
 	for I := 0 to Length(Params) - 1 do
 	begin
-		Finished := Finished - 1;
+		InterLockedDecrement(Finished);
 
 		BeginThread(@ThreadEntry, Params[I]);
 
