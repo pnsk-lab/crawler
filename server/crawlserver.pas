@@ -19,7 +19,7 @@ uses
 procedure OnShowRequestException(Res : TResponse; AnException : Exception; var handled : Boolean);
 begin
 	Res.ContentType := 'text/html';
-	if AnException.ClassName = 'EFOpenError' then
+	if (AnException.ClassName = 'EFOpenError') or (AnException.ClassName = 'EInOutError') then
 	begin
 		Res.Code := 404;
 		Res.CodeText := 'Not Found';
