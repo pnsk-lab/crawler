@@ -11,6 +11,8 @@ if [ "x$1" = "xcrawl" -o "x$1" = "x" ]; then
 	exec ./crawl/crawl --directory data "${@:2}"
 elif [ "x$1" = "xserver" -o "x$1" = "x" ]; then
 	exec ./server/crawlserver --directory data "${@:2}"
+elif [ "x$1" = "xbuild" ]; then
+	exec make PCFLAGS=-dDATABASE
 elif [ "x$1" = "xsetup" ]; then
 	if curl -f -X POST -H "Content-Type: application/json" "http://$CRAWL_HOSTNAME:$CRAWL_PORT/api/collections" -d '{
 		"name": "crawl",
