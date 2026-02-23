@@ -53,7 +53,7 @@ begin
 
 	SetLength(Params, 0);
 
-	WriteLn('[' + UserName + '] Populating...');
+	WriteLn(StdErr, '[' + UserName + '] Populating...');
 	while true do
 	begin
 		while true do

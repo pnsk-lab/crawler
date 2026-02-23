@@ -37,21 +37,21 @@ begin
 				begin
 					if FileExists('assets/' + JMD5Ext.AsString) then
 					begin
-						WriteLn('[' + ID + '] Skipped ' + JMD5Ext.AsString);
+						WriteLn(StdErr, '[' + ID + '] Skipped ' + JMD5Ext.AsString);
 						break;
 					end;
 
 					FS := TFileStream.Create('assets/' + JMD5Ext.AsString, fmCreate or fmOpenWrite or fmShareExclusive);
 					try TFPHttpClient.SimpleGet('https://cdn.assets.scratch.mit.edu/internalapi/asset/' + JMD5Ext.AsString + '/get', FS);
 					except
-						WriteLn('[' + ID + '] Failed to get ' + JMD5Ext.AsString + ' - retrying');
+						WriteLn(StdErr, '[' + ID + '] Failed to get ' + JMD5Ext.AsString + ' - retrying');
 						FS.Free();
 						continue;	
 					end;
 					FS.Free();
 					break;
 				end;
-				WriteLn('[' + ID + '] Got ' + Copy(IterationName, 0, Length(IterationName) - 1) + ' ' + JMD5Ext.AsString);
+				WriteLn(StdErr, '[' + ID + '] Got ' + Copy(IterationName, 0, Length(IterationName) - 1) + ' ' + JMD5Ext.AsString);
 			end;
 		end;
 	end;
@@ -74,14 +74,14 @@ begin
 	begin
 		try JStr := TFPHttpClient.SimpleGet('https://projects.scratch.mit.edu/' + ID + '?token=' + Token);
 		except
-			WriteLn('[' + ID + '] Failed to get project.json - retrying');
+			WriteLn(StdErr, '[' + ID + '] Failed to get project.json - retrying');
 			continue;	
 		end;
 		break;
 	end;
 	JData := GetJSON(JStr);
 
-	WriteLn('[' + ID + '] Got project.json');
+	WriteLn(StdErr, '[' + ID + '] Got project.json');
 
 	CreateDir('projects');
 	CreateDir('projects/' + ID);
@@ -121,7 +121,7 @@ begin
 	begin
 		try JStr := TFPHttpClient.SimpleGet('https://api.scratch.mit.edu/projects/' + ID);
 		except
-			WriteLn('[' + ID + '] Failed to get project token - retrying');
+			WriteLn(StdErr, '[' + ID + '] Failed to get project token - retrying');
 			continue;
 		end;
 		break;
@@ -158,7 +158,7 @@ begin
 						if not(JMetaFound.AsBoolean) then Skip := false;
 					end;
 
-					if Skip then WriteLn('[' + ID + '] Project has been scraped already - ignoring');
+					if Skip then WriteLn(StdErr, '[' + ID + '] Project has been scraped already - ignoring');
 						
 					FS.Free();
 				end;
@@ -170,7 +170,7 @@ begin
 					Write(MetaJSON, JStr);
 					CloseFile(MetaJSON);
 
-					WriteLn('[' + ID + '] Got project token');
+					WriteLn(StdErr, '[' + ID + '] Got project token');
 					CrawlProjectGet(ID, JDate.AsString, JToken.AsString);
 
 					JMeta := GetJSON('{}');
@@ -187,7 +187,7 @@ begin
 			end
 			else
 			begin
-				WriteLn('[' + ID + '] Project is too new - ignoring');
+				WriteLn(StdErr, '[' + ID + '] Project is too new - ignoring');
 			end;
 		end;
 	end;
