@@ -37,7 +37,7 @@ end;
 
 procedure CrawlProjectGet(ID : String);
 var
-	JData, JData2 : TJSONData;
+	JData, JToken : TJSONData;
 	JObj : TJSONObject;
 	JStr : String;
 	MetaJSON : TextFile;
@@ -46,8 +46,8 @@ begin
 	JData := GetJSON(JStr);
 	JObj := JData as TJSONObject;
 
-	JData2 := JObj.FindPath('project_token');
-	if Assigned(JData2) then
+	JToken := JObj.FindPath('project_token');
+	if Assigned(JToken) then
 	begin
 		CreateDir(ID);
 
@@ -57,7 +57,7 @@ begin
 		CloseFile(MetaJSON);
 
 		WriteLn('Got projcet token for ' + ID);
-		CrawlProjectGet(ID, JData2.AsString);
+		CrawlProjectGet(ID, JToken.AsString);
 	end;
 	
 	JData.Free();

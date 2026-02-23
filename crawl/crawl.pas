@@ -1,13 +1,23 @@
 program crawl;
 
 uses
-	CrawlProject;
+	CrawlProject,
+	CrawlUser;
 
 var
 	I : Integer;
 begin
-	for I := 1 to ParamCount do
+	I := 1;
+	while I < ParamCount do
 	begin
-		CrawlProjectGet(ParamStr(I));
+		if ParamStr(I) = '--user' then
+		begin
+			I := I + 1;
+			CrawlUserGet(ParamStr(I));
+		end
+		else
+		begin
+			CrawlProjectGet(ParamStr(I));
+		end;
 	end;
 end.
