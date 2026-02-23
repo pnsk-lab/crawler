@@ -23,6 +23,8 @@ begin
 
 	if Assigned(JIterations) then
 	begin
+		CreateDir('assets');
+	
 		for I := 0 to JIterations.Count - 1 do
 		begin
 			JIteration := JIterations.Items[I];
@@ -30,9 +32,17 @@ begin
 			JMD5Ext := JIteration.FindPath('md5ext');
 			if Assigned(JMD5Ext) then
 			begin
-				FS := TFileStream.Create(ID + '/' + JMD5Ext.AsString, fmCreate or fmOpenWrite);
+				FS := TFileStream.Create('assets/' + JMD5Ext.AsString, fmCreate or fmOpenWrite);
 				WriteLn('[' + ID + '] Got ' + Copy(IterationName, 0, Length(IterationName) - 1) + ' ' + JMD5Ext.AsString);
-				TFPHttpClient.SimpleGet('https://cdn.assets.scratch.mit.edu/internalapi/asset/' + JMD5Ext.AsString + '/get', FS);
+				while true do
+				begin
+					try TFPHttpClient.SimpleGet('https://cdn.assets.scratch.mit.edu/internalapi/asset/' + JMD5Ext.AsString + '/get', FS);
+					except
+						WriteLn('[' + ID + '] Failed to get ' + JMD5Ext.AsString + ' - retrying');
+						continue;	
+					end;
+					break;
+				end;
 				FS.Free();
 			end;
 		end;
@@ -52,7 +62,15 @@ var
 	ProjectJSON : TextFile;
 	I : Integer;
 begin
-	JStr := TFPHttpClient.SimpleGet('https://projects.scratch.mit.edu/' + ID + '?token=' + Token);
+	while true do
+	begin
+		try JStr := TFPHttpClient.SimpleGet('https://projects.scratch.mit.edu/' + ID + '?token=' + Token);
+		except
+			WriteLn('[' + ID + '] Failed to get project.json - retrying');
+			continue;	
+		end;
+		break;
+	end;
 	JData := GetJSON(JStr);
 
 	WriteLn('[' + ID + '] Got project.json');
@@ -85,7 +103,15 @@ var
 	JStr : String;
 	MetaJSON : TextFile;
 begin
-	JStr := TFPHttpClient.SimpleGet('https://api.scratch.mit.edu/projects/' + ID);
+	while true do
+	begin
+		try JStr := TFPHttpClient.SimpleGet('https://api.scratch.mit.edu/projects/' + ID);
+		except
+			WriteLn('[' + ID + '] Failed to get project token - retrying');
+			continue;
+		end;
+		break;
+	end;
 	JData := GetJSON(JStr);
 	JObj := JData as TJSONObject;
 

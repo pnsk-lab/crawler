@@ -23,7 +23,14 @@ begin
 
 	while true do
 	begin
-		JStr := TFPHttpClient.SimpleGet('https://api.scratch.mit.edu/users/' + UserName + '/projects?limits=20&offset=' + IntToStr(N));
+		while true do
+		begin
+			try JStr := TFPHttpClient.SimpleGet('https://api.scratch.mit.edu/users/' + UserName + '/projects?limits=20&offset=' + IntToStr(N));
+			except
+				continue;
+			end;
+			break;
+		end;
 		JData := GetJSON(JStr);
 
 		if JData.Count = 0 then
