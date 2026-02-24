@@ -4,7 +4,7 @@ interface
 uses
 	httpdefs;
 
-procedure HammerSideProcess(Req : TRequest; Res : TResponse; FileName : String);
+function HammerSideProcess(Req : TRequest; Res : TResponse; FileName : String) : String;
 
 implementation
 uses
@@ -114,7 +114,7 @@ begin
 	end;
 end;
 
-procedure HammerSideProcess(Req : TRequest; Res : TResponse; FileName : String);
+function HammerSideProcess(Req : TRequest; Res : TResponse; FileName : String) : String;
 var
 	TF : TextFile;
 	Lines : Array of String;
@@ -125,6 +125,9 @@ var
 	Param, ParamResult : String;
 	Stack : Array of Integer;
 	V : Integer;
+	AfterNL : Boolean;
+	BeforeNL : Boolean;
+	Escape : Boolean;
 	Query : THammerStringMap;
 begin
 	AssignFile(TF, FileName);
@@ -167,6 +170,7 @@ begin
 	//         1 - true
 	//         2 - skip below
 	Stack[0] := 1;
+	HammerSideProcess := '';
 	for I := 0 to Length(Lines) - 1 do
 	begin
 		LineStr := Trim(Lines[I]);
@@ -175,7 +179,7 @@ begin
 			LineStr := Trim(Copy(LineStr, 6, Length(LineStr) - 3 - 6));
 
 			Arr := ParseCommand(LineStr);
-			if (Arr[0] = 'if') and (Length(Arr) = 2) then
+			if Arr[0] = 'if' then
 			begin
 				if Stack[Length(Stack) - 1] = 1 then
 				begin
@@ -186,7 +190,7 @@ begin
 					Insert(2, Stack, Length(Stack));
 				end;
 			end
-			else if (Arr[0] = 'elif') and (Length(Arr) = 2) then
+			else if Arr[0] = 'elif' then
 			begin
 				if Stack[Length(Stack) - 1] = 0 then
 				begin
@@ -198,7 +202,7 @@ begin
 				end;
 				Delete(Stack, Length(Stack) - 2, 1);
 			end
-			else if (Arr[0] = 'else') and (Length(Arr) = 1) then
+			else if Arr[0] = 'else' then
 			begin
 				if Stack[Length(Stack) - 1] = 0 then
 				begin
@@ -210,34 +214,70 @@ begin
 				end;
 				Delete(Stack, Length(Stack) - 2, 1);
 			end
-			else if (Arr[0] = 'endif') and (Length(Arr) = 1) then
+			else if Arr[0] = 'endif' then
 			begin
 				Delete(Stack, Length(Stack) - 1, 1);
 			end
 			else if not(Stack[Length(Stack) - 1] = 1) then
 			begin
 			end
-			else if (Arr[0] = 'echo') and (Length(Arr) = 2) then
+			else if Arr[0] = 'echo' then
 			begin
+				BeforeNL := true;
+				AfterNL := true;
+				if not((GetCommandArgument(Arr, 'nonl') = '') or (GetCommandArgument(Arr, 'nonl') = 'false')) then
+				begin
+					BeforeNL := false;
+					AfterNL := false;
+				end;
+				if GetCommandArgument(Arr, 'beforenl') = 'false' then
+				begin
+					BeforeNL := false;
+				end;
+				if GetCommandArgument(Arr, 'afternl') = 'false' then
+				begin
+					AfterNL := false;
+				end;
+
 				Param := GetCommandArgument(Arr, 'var');
+				if Param = '' then
+				begin
+					Param := GetCommandArgument(Arr, 'varesc');
+
+					if not(Param = '') then Escape := true;
+				end;
 
 				if Vars.TryGetData(Param, ParamResult) then
 				begin
-					Res.Content := Res.Content + ParamResult;
+					if Escape then
+					begin
+						ParamResult := StringReplace(ParamResult, '&', '&amp;',  [rfReplaceAll]);
+						ParamResult := StringReplace(ParamResult, '"', '&quot;',  [rfReplaceAll]);
+						ParamResult := StringReplace(ParamResult, '<', '&lt;',  [rfReplaceAll]);
+						ParamResult := StringReplace(ParamResult, '>', '&gt;',  [rfReplaceAll]);
+					end;
+
+					if not(BeforeNL) and (Copy(HammerSideProcess, Length(HammerSideProcess) - 1, 2) = #13#10) then
+					begin
+						HammerSideProcess := Copy(HammerSideProcess, 1, Length(HammerSideProcess) - 2);
+					end;
+					HammerSideProcess := HammerSideProcess + ParamResult;
 				end;
+
+				if AfterNL then HammerSideProcess := HammerSideProcess + #13#10;
 			end
-			else if (Arr[0] = 'set') and (Length(Arr) = 3) then
+			else if Arr[0] = 'set' then
 			begin
 				Vars[GetCommandArgument(Arr, 'var')] := GetCommandArgument(Arr, 'value');
 			end
-			else if (Arr[0] = 'include') and (Length(Arr) = 2) then
+			else if Arr[0] = 'include' then
 			begin
-				HammerSideProcess(Req, Res, ExtractFilePath(FileName) + GetCommandArgument(Arr, 'file'));
+				HammerSideProcess := HammerSideProcess + HammerSideProcess(Req, Res, ExtractFilePath(FileName) + GetCommandArgument(Arr, 'file'));
 			end;
 		end
 		else
 		begin
-			Res.Content := Res.Content + Lines[I] + #13#10;
+			HammerSideProcess := HammerSideProcess + Lines[I] + #13#10;
 		end;
 	end;
 

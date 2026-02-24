@@ -18,8 +18,7 @@ begin
 	Path := 'dynamic/index.html';
 
 	Res.ContentType := HammerExtensionGet(Path);
-	Res.Content := '';
-	HammerSideProcess(Req, Res, Path);
+	Res.Content := HammerSideProcess(Req, Res, Path);
 end;
 
 end.
