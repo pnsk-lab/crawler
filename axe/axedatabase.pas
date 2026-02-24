@@ -1,8 +1,8 @@
-unit CrawlDatabase;
+unit AxeDatabase;
 
 interface
 type
-	TCrawlDatabaseEntry = record
+	TAxeDatabaseEntry = record
 		ProjectID : Integer;
 		Title : String;
 		Description : String;
@@ -12,8 +12,8 @@ type
 		Timestamp : String;
 	end;
 
-procedure CrawlDatabaseConnect(HostName : String; Port : String);
-procedure CrawlDatabaseAdd(Entry : TCrawlDatabaseEntry);
+procedure AxeDatabaseConnect(HostName : String; Port : String);
+procedure AxeDatabaseAdd(Entry : TAxeDatabaseEntry);
 
 implementation
 uses
@@ -28,13 +28,13 @@ var
 	DBHostName : String;
 	DBPort : String;
 
-procedure CrawlDatabaseConnect(HostName : String; Port : String);
+procedure AxeDatabaseConnect(HostName : String; Port : String);
 begin
 	DBHostName := HostName;
 	DBPort := Port;
 end;
 
-procedure CrawlDatabaseAdd(Entry : TCrawlDatabaseEntry);
+procedure AxeDatabaseAdd(Entry : TAxeDatabaseEntry);
 var
 	Client : TFPHTTPClient;
 	JData : TJSONData;

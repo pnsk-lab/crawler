@@ -1,10 +1,10 @@
-unit CrawlServerSide;
+unit HammerSide;
 
 interface
 uses
 	httpdefs;
 
-procedure CrawlServerSideProcess(Req : TRequest; Res : TResponse; FileName : String);
+procedure HammerSideProcess(Req : TRequest; Res : TResponse; FileName : String);
 
 implementation
 uses
@@ -117,7 +117,7 @@ begin
 	end;
 end;
 
-procedure CrawlServerSideProcess(Req : TRequest; Res : TResponse; FileName : String);
+procedure HammerSideProcess(Req : TRequest; Res : TResponse; FileName : String);
 var
 	TF : TextFile;
 	Lines : Array of String;
@@ -227,7 +227,7 @@ begin
 			end
 			else if (Arr[0] = 'include') and (Length(Arr) = 2) then
 			begin
-				CrawlServerSideProcess(Req, Res, ExtractFilePath(FileName) + GetCommandArgument(Arr, 'file'));
+				HammerSideProcess(Req, Res, ExtractFilePath(FileName) + GetCommandArgument(Arr, 'file'));
 			end;
 		end
 		else

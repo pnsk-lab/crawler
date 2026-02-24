@@ -1,5 +1,5 @@
-/crawl/crawl
-/server/crawlserver
+/axe/axe
+/hammer/hammer
 *.exe
 *.o
 *.ppu

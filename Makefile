@@ -3,16 +3,16 @@ PCFLAGS =
 
 .PHONY: all clean
 
-all: crawl/crawl$(E) server/crawlserver$(E)
+all: axe/axe$(E) hammer/hammer$(E)
 
-crawl/crawl$(E): crawl/*.pas
-	fpc -Mobjfpc -Sh $(PCFLAGS) -e$@ crawl/crawl.pas
+axe/axe$(E): axe/*.pas
+	fpc -Mobjfpc -Sh $(PCFLAGS) -e$@ axe/axe.pas
 
-server/crawlserver$(E): server/*.pas
+hammer/hammer$(E): hammer/*.pas
 	@echo "$(PCFLAGS)" | grep -- "-dDATABASE" >/dev/null 2>&1 ; if [ "$$?" = "0" ]; then \
-		echo "fpc -Mobjfpc -Sh $(PCFLAGS) -e$@ server/crawlserver.pas" ; \
-		fpc -Mobjfpc -Sh $(PCFLAGS) -e$@ server/crawlserver.pas ; \
+		echo "fpc -Mobjfpc -Sh $(PCFLAGS) -e$@ hammer/hammer.pas" ; \
+		fpc -Mobjfpc -Sh $(PCFLAGS) -e$@ hammer/hammer.pas ; \
 	fi
 
 clean:
-	rm -f */*.ppu */*.o */*.exe crawl/crawl server/crawlserver
+	rm -f */*.ppu */*.o */*.exe axe/axe hammer/hammer

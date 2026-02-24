@@ -1,8 +1,8 @@
-unit CrawlProject;
+unit AxeProject;
 
 interface
-function CrawlProjectGet(ID : String; DT : String; Token: String) : boolean;
-procedure CrawlProjectGet(ID : String);
+function AxeProjectGet(ID : String; DT : String; Token: String) : boolean;
+procedure AxeProjectGet(ID : String);
 
 implementation
 uses
@@ -13,7 +13,7 @@ uses
 	sysutils,
 	classes,
 	dateutils,
-	CrawlDatabase;
+	AxeDatabase;
 
 procedure ProjectTargetIteration(ID : String; JTarget : TJSONData; IterationName : String);
 var
@@ -64,14 +64,14 @@ begin
 	ProjectTargetIteration(ID, JTarget, 'sounds');
 end;
 
-function CrawlProjectGet(ID : String; DT : String; Token: String) : boolean;
+function AxeProjectGet(ID : String; DT : String; Token: String) : boolean;
 var
 	JStr : String;
 	JData, JTargets, JTarget : TJSONData;
 	ProjectJSON : TextFile;
 	I : Integer;
 begin
-	CrawlProjectGet := true;
+	AxeProjectGet := true;
 	while true do
 	begin
 		try JStr := TFPHTTPClient.SimpleGet('https://projects.scratch.mit.edu/' + ID + '?token=' + Token);
@@ -84,7 +84,7 @@ begin
 	try
 		JData := GetJSON(JStr, false);
 	except
-		CrawlProjectGet := false;
+		AxeProjectGet := false;
 		Exit();
 	end;
 
@@ -113,7 +113,7 @@ begin
 	JData.Free();
 end;
 
-procedure CrawlProjectGet(ID : String);
+procedure AxeProjectGet(ID : String);
 var
 	JData, JToken, JDate, JMeta, JMetaFound : TJSONData;
 	JStr : String;
@@ -123,7 +123,7 @@ var
 	JObj : TJSONObject;
 	FS : TFileStream;
 	Skip : Boolean;
-	Entry : TCrawlDatabaseEntry;
+	Entry : TAxeDatabaseEntry;
 	N : Integer;
 begin
 	while true do
@@ -219,11 +219,11 @@ begin
 					CloseFile(MetaJSON);
 
 					WriteLn(StdErr, '[' + ID + '] Got project token');
-					if CrawlProjectGet(ID, JDate.AsString, JToken.AsString) then
+					if AxeProjectGet(ID, JDate.AsString, JToken.AsString) then
 					begin
 						if N = 7 then
 						begin
-							CrawlDatabaseAdd(Entry);
+							AxeDatabaseAdd(Entry);
 						end;
 
 						JMeta := GetJSON('{}');

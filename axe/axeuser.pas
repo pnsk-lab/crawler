@@ -1,7 +1,7 @@
-unit CrawlUser;
+unit AxeUser;
 
 interface
-procedure CrawlUserGet(UserName : String);
+procedure AxeUserGet(UserName : String);
 
 implementation
 uses
@@ -10,7 +10,7 @@ uses
 	fpjson,
 	jsonparser,
 	sysutils,
-	CrawlProject;
+	AxeProject;
 
 type
 	TThreadParams = record
@@ -31,7 +31,7 @@ var
 begin
 	Params := P;
 
-	CrawlProjectGet(Params^.ID);
+	AxeProjectGet(Params^.ID);
 
 	Dispose(Params);
 
@@ -40,7 +40,7 @@ begin
 	ThreadEntry := 0;
 end;
 
-procedure CrawlUserGet(UserName : String);
+procedure AxeUserGet(UserName : String);
 var
 	JStr : String;
 	JData, JItem, JID : TJSONData;

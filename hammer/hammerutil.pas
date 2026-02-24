@@ -1,17 +1,17 @@
-unit CrawlServerUtil;
+unit HammerUtil;
 
 interface
 uses
 	httpdefs;
 
-procedure CrawlServerUtilHeader(Res : TResponse; Path : String);
+procedure HammerUtilHeader(Res : TResponse; Path : String);
 
 implementation
 uses
 	sysutils,
 	httpprotocol;
 
-procedure CrawlServerUtilHeader(Res : TResponse; Path : String);
+procedure HammerUtilHeader(Res : TResponse; Path : String);
 var
 	DT : TDateTime;
 	Time : LongInt;

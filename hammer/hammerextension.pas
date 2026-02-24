@@ -1,7 +1,7 @@
-unit CrawlServerExtension;
+unit HammerExtension;
 
 interface
-function CrawlServerExtensionGet(Path : String) : String;
+function HammerExtensionGet(Path : String) : String;
 
 implementation
 type
@@ -50,12 +50,12 @@ const
 		)
 	);
 
-function CrawlServerExtensionGet(Path : String) : String;
+function HammerExtensionGet(Path : String) : String;
 var
 	I, J : Integer;
 	Extension : String;
 begin
-	CrawlServerExtensionGet := 'application/octet-stream';
+	HammerExtensionGet := 'application/octet-stream';
 
 	I := Length(Path);
 	while I >= 1 do
@@ -68,7 +68,7 @@ begin
 			begin
 				if Extensions[J].Extension = Extension then
 				begin
-					CrawlServerExtensionGet := Extensions[J].MIME;
+					HammerExtensionGet := Extensions[J].MIME;
 					break;
 				end;
 

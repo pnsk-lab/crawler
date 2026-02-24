@@ -7,9 +7,9 @@ uses
 	openssl,
 	sysutils,
 	dos,
-	CrawlProject,
-	CrawlUser,
-	CrawlDatabase;
+	AxeProject,
+	AxeUser,
+	AxeDatabase;
 
 var
 	I : Integer;
@@ -19,7 +19,7 @@ begin
 	InitSSLInterface();
 
 {$ifdef DATABASE}
-	CrawlDatabaseConnect(GetEnv('CRAWL_SOLR_HOSTNAME'), GetEnv('CRAWL_SOLR_PORT'));
+	AxeDatabaseConnect(GetEnv('AXE_SOLR_HOSTNAME'), GetEnv('AXE_SOLR_PORT'));
 {$endif}
 
 	while I < ParamCount do
@@ -27,7 +27,7 @@ begin
 		if ParamStr(I) = '--user' then
 		begin
 			I := I + 1;
-			CrawlUserGet(ParamStr(I));
+			AxeUserGet(ParamStr(I));
 		end
 		else if ParamStr(I) = '--directory' then
 		begin
@@ -37,7 +37,7 @@ begin
 		end
 		else
 		begin
-			CrawlProjectGet(ParamStr(I));
+			AxeProjectGet(ParamStr(I));
 		end;
 
 		I := I + 1;
