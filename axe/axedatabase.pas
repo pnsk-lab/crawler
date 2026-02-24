@@ -42,7 +42,7 @@ var
 	JStr : String;
 begin
 {$ifndef DATABASE}
-	Exit;
+	exit;
 {$endif}
 
 	if Overwrite then
@@ -86,7 +86,7 @@ begin
 
 		if Assigned(JNumFound) then
 		begin
-			if JNumFound.AsInteger > 0 then Exit;
+			if JNumFound.AsInteger > 0 then exit;
 		end;
 	end;
 

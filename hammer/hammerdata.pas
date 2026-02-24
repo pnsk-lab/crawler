@@ -14,18 +14,18 @@ uses
 	httpprotocol,
 	HammerExtension,
 	HammerInfo,
-	HammerUtil;
+	HammerUtility;
 
 procedure HammerDataAssetsRoute(Req : TRequest; Res : TResponse);
 begin
-	HammerUtilHeader(Res, HammerInfoDirectory + 'assets/' + Req.RouteParams['file']);
+	HammerUtilityHeader(Res, HammerInfoDirectory + 'assets/' + Req.RouteParams['file']);
 	Res.ContentType := HammerExtensionGet(Req.RouteParams['file']);
 	Res.ContentStream := TFileStream.Create(HammerInfoDirectory + 'assets/' + Req.RouteParams['file'], fmOpenRead or fmShareDenyWrite);
 end;
 
 procedure HammerDataProjectsRoute(Req : TRequest; Res : TResponse);
 begin
-	HammerUtilHeader(Res, HammerInfoDirectory + 'projects/' + Req.RouteParams['id'] + '/' + Req.RouteParams['timestamp'] + '/' + Req.RouteParams['file']);
+	HammerUtilityHeader(Res, HammerInfoDirectory + 'projects/' + Req.RouteParams['id'] + '/' + Req.RouteParams['timestamp'] + '/' + Req.RouteParams['file']);
 	Res.ContentType := HammerExtensionGet(Req.RouteParams['file']);
 	Res.ContentStream := TFileStream.Create(HammerInfoDirectory + 'projects/' + Req.RouteParams['id'] + '/' + Req.RouteParams['timestamp'] + '/' + Req.RouteParams['file'], fmOpenRead or fmShareDenyWrite);
 end;

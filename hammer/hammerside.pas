@@ -11,13 +11,10 @@ uses
 	sysutils,
 	classes,
 	strutils,
-	fgl;
+	fgl,
+	HammerUtility;
 
-type
-	TStringMap = specialize TFPGMap<String, String>;
-	TStringArray = Array of String;
-
-function ParseCommand(Command : String) : TStringArray;
+function ParseCommand(Command : String) : THammerStringArray;
 var
 	S : String;
 	DQ : Boolean;
@@ -67,7 +64,7 @@ begin
 	end;
 end;
 
-function GetCommandArgument(Arguments : TStringArray; Argument : String) : String;
+function GetCommandArgument(Arguments : THammerStringArray; Argument : String) : String;
 var
 	I : Integer;
 begin
@@ -83,9 +80,9 @@ begin
 	end;
 end;
 
-function Expression(Vars : TStringMap; Expr : String) : Integer;
+function Expression(Vars : THammerStringMap; Expr : String) : Integer;
 var
-	Arr : TStringArray;
+	Arr : THammerStringArray;
 	ArrResult : String;
 begin
 	Expression := 0;
@@ -124,10 +121,11 @@ var
 	LineStr : String;
 	I : Integer;
 	Arr : Array of String;
-	Vars : TStringMap;
+	Vars : THammerStringMap;
 	Param, ParamResult : String;
 	Stack : Array of Integer;
 	V : Integer;
+	Query : THammerStringMap;
 begin
 	AssignFile(TF, FileName);
 
@@ -151,10 +149,17 @@ begin
 		Insert(LineStr, Lines, Length(Lines));
 	until EOF(TF);
 
-	Vars := TStringMap.Create();
+	Vars := THammerStringMap.Create();
 	Vars['PATH_INFO'] := Req.PathInfo;
+	Vars['QUERY_STRING'] := Req.QueryString;
 	Vars['STATUS_CODE'] := '200';
 	Vars['STATUS_TEXT'] := 'OK';
+
+	Query := HammerUtilityParseQuery(Req.QueryString);
+	for I := 0 to Query.Count - 1 do
+	begin
+		Vars['QUERY_STRING_' + UpperCase(Query.Keys[I])] := Query[Query.Keys[I]];
+	end;
 
 	SetLength(Stack, 1);
 
@@ -218,7 +223,7 @@ begin
 
 				if Vars.TryGetData(Param, ParamResult) then
 				begin
-					Res.Content := Res.Content + ParamResult + #13#10;
+					Res.Content := Res.Content + ParamResult;
 				end;
 			end
 			else if (Arr[0] = 'set') and (Length(Arr) = 3) then

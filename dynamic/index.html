@@ -5,6 +5,8 @@
 		<!--#set var="TITLE" value="Home" -->
 		<!--#elif expr="$PATH_INFO = ''" -->
 		<!--#set var="TITLE" value="Home" -->
+		<!--#elif expr="$PATH_INFO = '/search'" -->
+		<!--#set var="TITLE" value="Search" -->
 		<!--#else -->
 		<!--#set var="TITLE" value="Not Found" -->
 		<!--#set var="STATUS_CODE" value="404" -->
@@ -41,6 +43,8 @@
 					<div id="content">
 						<!--#if expr="$TITLE = 'Home'" -->
 						<!--#include file="home.html" -->
+						<!--#elif expr="$TITLE = 'Search'" -->
+						<!--#include file="search.html" -->
 						<!--#elif expr="$TITLE = 'Not Found'" -->
 						<!--#include file="404.html" -->
 						<!--#endif -->

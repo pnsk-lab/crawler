@@ -13,7 +13,8 @@ uses
 	sysutils,
 	classes,
 	dateutils,
-	AxeDatabase;
+	AxeDatabase,
+	AxeUtility;
 
 procedure ProjectTargetIteration(ID : String; JTarget : TJSONData; IterationName : String);
 var
@@ -90,7 +91,7 @@ begin
 				begin
 					WriteLn(StdErr, '[' + ID + '] Failed to get project.json - getting token again...');
 					AxeProjectGet := 2;
-					Exit;
+					exit;
 				end
 				else
 				begin
@@ -109,7 +110,7 @@ begin
 		JData := GetJSON(JStr, false);
 	except
 		AxeProjectGet := 0;
-		Exit;
+		exit;
 	end;
 
 	WriteLn(StdErr, '[' + ID + '] Got project.json');
@@ -137,9 +138,40 @@ begin
 	JData.Free();
 end;
 
+procedure GetThumbnail(ID : String; Dest : String; URL : String);
+var
+	HTTP : TFPHTTPClient;
+	FS : TFileStream;
+begin
+	while true do
+	begin
+		while true do
+		begin
+			try FS := TFileStream.Create(Dest, fmCreate or fmOpenWrite or fmShareExclusive);
+			except
+				continue;
+			end;
+			break;
+		end;
+		HTTP := TFPHTTPClient.Create(nil);
+		HTTP.AllowRedirect := true;
+		try HTTP.Get(URL, FS);
+		except
+			WriteLn(StdErr, '[' + ID + '] Failed to get thumbnail - retrying');
+			HTTP.Free();
+			FS.Free();
+			continue;
+		end;
+		HTTP.Free();
+		FS.Free();
+		WriteLn(StdErr, '[' + ID + '] Got thumbnail');
+		break;
+	end;
+end;
+
 procedure AxeProjectGet(ID : String);
 var
-	JData, JToken, JDate, JMeta, JMetaFound : TJSONData;
+	JData, JToken, JDate, JMeta, JMetaFound, JImage : TJSONData;
 	JStr : String;
 	MetaJSON, InfoJSON : TextFile;
 	DT : TDateTime;
@@ -150,6 +182,7 @@ var
 	Entry : TAxeDatabaseEntry;
 	N : Integer;
 	RetValue : Integer;
+	ThumbnailExtension : String;
 begin
 	TryISOStrToDateTime('2026-01-22T00:00Z', BadDT);
 
@@ -220,6 +253,16 @@ begin
 	
 					Skip := false;
 	
+					JImage := JObj.FindPath('images.282x218');
+					if Assigned(JImage) then
+					begin
+						ThumbnailExtension := AxeUtilityGetExtension(JImage.AsString);
+						if not(FileExists('projects/' + ID + '/' + JDate.AsString + '/thumbnail.' + ThumbnailExtension)) then
+						begin
+							GetThumbnail(ID, 'projects/' + ID + '/' + JDate.AsString + '/thumbnail.' + ThumbnailExtension, JImage.AsString);
+						end;
+					end;
+
 					if FileExists('projects/' + ID + '/' + JDate.AsString + '/metadata.json') then
 					begin
 						FS := TFileStream.Create('projects/' + ID + '/' + JDate.AsString + '/metadata.json', fmOpenRead);
