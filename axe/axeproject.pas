@@ -218,7 +218,7 @@ begin
 					begin
 						if N = 7 then
 						begin
-							AxeDatabaseAdd(Entry);
+							AxeDatabaseAdd(Entry, False);
 						end;
 						WriteLn(StdErr, '[' + ID + '] Project has been scraped already - ignoring');
 					end;
@@ -230,7 +230,7 @@ begin
 				begin
 					if N = 7 then
 					begin
-						AxeDatabaseAdd(Entry);
+						AxeDatabaseAdd(Entry, False);
 					end;
 
 					AssignFile(MetaJSON, 'projects/' + ID + '/' + JDate.AsString + '/info.json');

@@ -13,7 +13,7 @@ type
 	end;
 
 procedure AxeDatabaseConnect(HostName : String; Port : String);
-procedure AxeDatabaseAdd(Entry : TAxeDatabaseEntry);
+procedure AxeDatabaseAdd(Entry : TAxeDatabaseEntry; Overwrite : Boolean = True);
 
 implementation
 uses
@@ -34,38 +34,61 @@ begin
 	DBPort := Port;
 end;
 
-procedure AxeDatabaseAdd(Entry : TAxeDatabaseEntry);
+procedure AxeDatabaseAdd(Entry : TAxeDatabaseEntry; Overwrite : Boolean = True);
 var
 	Client : TFPHTTPClient;
-	JData : TJSONData;
+	JData, JNumFound : TJSONData;
 	JObj : TJSONObject;
+	JStr : String;
 begin
 {$ifndef DATABASE}
 	Exit;
 {$endif}
 
-	JData := GetJSON('{}');
-	JObj := JData as TJSONObject;
-
-	JObj.Add('delete', GetJSON('{"query":"project_id:' + IntToStr(Entry.ProjectID) + '"}'));
-
-	while true do
+	if Overwrite then
 	begin
-		Client := TFPHTTPClient.Create(nil);
+		JData := GetJSON('{}');
+		JObj := JData as TJSONObject;
 
-		try
-			Client.AddHeader('Content-Type', 'application/json');
-			Client.RequestBody := TRawByteStringStream.Create(JData.AsJSON);
-			Client.Post('http://' + DBHostName + ':' + DBPort + '/solr/toolbox/update?commit=true');
-		except
+		JObj.Add('delete', GetJSON('{"query":"project_id:' + IntToStr(Entry.ProjectID) + '"}'));
+
+		while true do
+		begin
+			Client := TFPHTTPClient.Create(nil);
+
+			try
+				Client.AddHeader('Content-Type', 'application/json');
+				Client.RequestBody := TRawByteStringStream.Create(JData.AsJSON);
+				Client.Post('http://' + DBHostName + ':' + DBPort + '/solr/toolbox/update?commit=true');
+			except
+				Client.Free();
+				continue;
+			end;
 			Client.Free();
-			continue;
+			break;
 		end;
-		Client.Free();
-		break;
-	end;
 
-	JData.Free();
+		JData.Free();
+	end
+	else
+	begin
+		while true do
+		begin
+			try JStr := TFPHTTPClient.SimpleGet('http://' + DBHostName + ':' + DBPort + '/solr/toolbox/select?q=project_id%3A' + IntToStr(Entry.ProjectID));
+			except
+				continue;
+			end;
+			break;
+		end;
+
+		JData := GetJSON(JStr);
+		JNumFound := JData.FindPath('response.numFound');
+
+		if Assigned(JNumFound) then
+		begin
+			if JNumFound.AsInteger > 0 then Exit;
+		end;
+	end;
 
 	JData := GetJSON('{}');
 	JObj := JData as TJSONObject;
