@@ -84,6 +84,7 @@ begin
 	begin
 		try JStr := TFPHTTPClient.SimpleGet('https://projects.scratch.mit.edu/' + ID + '?token=' + Token);
 		except
+			WriteLn('https://projects.scratch.mit.edu/' + ID + '?token=' + Token);
 			WriteLn(StdErr, '[' + ID + '] Failed to get project.json - retrying');
 			continue;
 		end;

@@ -10,6 +10,7 @@ uses
 	fpjson,
 	jsonparser,
 	sysutils,
+	classes,
 	AxeProject;
 
 type
@@ -17,27 +18,27 @@ type
 		ID : String;
 	end;
 	PThreadParams = ^TThreadParams;
+	TProjectThread = class(TThread)
+	public
+		Params : PThreadParams;
+	protected
+		procedure Execute(); override;
+	end;
 
 const
 	MaxLimits : Integer = 20;
 	MaxThreads : Integer = 32;
 
 var
-	Finished : Integer;
+	ThreadFinished : Integer;
 
-function ThreadEntry(P : Pointer) : Ptrint;
-var
-	Params : PThreadParams;
+procedure TProjectThread.Execute();
 begin
-	Params := P;
-
 	AxeProjectGet(Params^.ID);
 
 	Dispose(Params);
 
-	InterLockedIncrement(Finished);
-
-	ThreadEntry := 0;
+	InterLockedIncrement(ThreadFinished);
 end;
 
 procedure AxeUserGet(UserName : String);
@@ -48,6 +49,7 @@ var
 	I : Integer;
 	Param : PThreadParams;
 	Params : Array of PThreadParams;
+	Thread : TProjectThread;
 begin
 	N := 0;
 
@@ -91,16 +93,19 @@ begin
 		N := N + MaxLimits;
 	end;
 	
-	Finished := MaxThreads;
+	ThreadFinished := MaxThreads;
 	for I := 0 to Length(Params) - 1 do
 	begin
-		InterLockedDecrement(Finished);
+		InterLockedDecrement(ThreadFinished);
 
-		BeginThread(@ThreadEntry, Params[I]);
+		Thread := TProjectThread.Create(true);
+		Thread.FreeOnTerminate := true;
+		Thread.Params := Params[I];
+		Thread.Start();
 
-		while Finished = 0 do;
+		while ThreadFinished = 0 do;
 	end;
-	while not(Finished = MaxThreads) do;
+	while not(ThreadFinished = MaxThreads) do;
 end;
 
 end.
