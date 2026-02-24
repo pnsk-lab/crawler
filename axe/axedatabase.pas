@@ -56,7 +56,7 @@ begin
 		try
 			Client.AddHeader('Content-Type', 'application/json');
 			Client.RequestBody := TRawByteStringStream.Create(JData.AsJSON);
-			Client.Post('http://' + DBHostName + ':' + DBPort + '/solr/crawl/update?commit=true');
+			Client.Post('http://' + DBHostName + ':' + DBPort + '/solr/toolbox/update?commit=true');
 		except
 			Client.Free();
 			continue;
@@ -85,7 +85,7 @@ begin
 		try
 			Client.AddHeader('Content-Type', 'application/json');
 			Client.RequestBody := TRawByteStringStream.Create(JData.AsJSON);
-			Client.Post('http://' + DBHostName + ':' + DBPort + '/api/collections/crawl/update');
+			Client.Post('http://' + DBHostName + ':' + DBPort + '/api/collections/toolbox/update');
 		except
 			Client.Free();
 			continue;
