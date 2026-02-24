@@ -230,7 +230,7 @@ begin
 				begin
 					if N = 7 then
 					begin
-						AxeDatabaseAdd(Entry, False);
+						AxeDatabaseAdd(Entry, True);
 					end;
 
 					AssignFile(MetaJSON, 'projects/' + ID + '/' + JDate.AsString + '/info.json');
