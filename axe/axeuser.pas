@@ -63,7 +63,14 @@ begin
 		begin
 			try JStr := TFPHTTPClient.SimpleGet('https://api.scratch.mit.edu/users/' + UserName + '/projects?limits=' + IntToStr(MaxLimits) + '&offset=' + IntToStr(N));
 			except
-				continue;
+				on E : EHTTPClient do
+				begin
+					exit;
+				end;
+				on E : Exception do
+				begin
+					continue;
+				end;
 			end;
 			break;
 		end;
