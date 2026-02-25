@@ -99,6 +99,7 @@ begin
 	JObj.Add('instructions', Entry.Instructions);
 	JObj.Add('author_id', Entry.AuthorID);
 	JObj.Add('author_name', Entry.AuthorName);
+	JObj.Add('author_search_name', Entry.AuthorName);
 	JObj.Add('timestamp', Entry.Timestamp);
 
 	while true do

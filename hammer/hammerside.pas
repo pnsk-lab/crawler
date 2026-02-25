@@ -12,7 +12,8 @@ uses
 	classes,
 	strutils,
 	fgl,
-	HammerUtility;
+	HammerUtility,
+	HammerSearch;
 
 function ParseCommand(Command : String) : THammerStringArray;
 var
@@ -164,6 +165,11 @@ begin
 		Vars['QUERY_STRING_' + UpperCase(Query.Keys[I])] := Query[Query.Keys[I]];
 	end;
 
+	if Req.PathInfo = '/search' then
+	begin
+		HammerSearchProcess(Vars, Query, Req, Res);
+	end;
+
 	SetLength(Stack, 1);
 
 	{
@@ -241,6 +247,7 @@ begin
 					AfterNL := false;
 				end;
 
+				Escape := false;
 				Param := GetCommandArgument(Arr, 'var');
 				if Param = '' then
 				begin

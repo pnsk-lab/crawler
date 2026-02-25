@@ -273,7 +273,7 @@ begin
 				begin
 					CreateDir('projects');
 					CreateDir('projects/' + ID);
-					CreateDir('projects/' + ID + '/' + JDate.AsString);
+					CreateDir('projects/' + ID + '/' + StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]));
 	
 					JObj := JData as TJSONObject;
 	
@@ -326,15 +326,15 @@ begin
 					if Assigned(JImage) then
 					begin
 						ThumbnailExtension := AxeUtilityGetExtension(JImage.AsString);
-						if not(FileExists('projects/' + ID + '/' + JDate.AsString + '/thumbnail.' + ThumbnailExtension)) then
+						if not(FileExists('projects/' + ID + '/' + StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]) + '/thumbnail.' + ThumbnailExtension)) then
 						begin
-							GetThumbnail(ID, 'projects/' + ID + '/' + JDate.AsString + '/thumbnail.' + ThumbnailExtension, JImage.AsString);
+							GetThumbnail(ID, 'projects/' + ID + '/' + StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]) + '/thumbnail.' + ThumbnailExtension, JImage.AsString);
 						end;
 					end;
 
-					if FileExists('projects/' + ID + '/' + JDate.AsString + '/metadata.json') then
+					if FileExists('projects/' + ID + '/' + StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]) + '/metadata.json') then
 					begin
-						FS := TFileStream.Create('projects/' + ID + '/' + JDate.AsString + '/metadata.json', fmOpenRead);
+						FS := TFileStream.Create('projects/' + ID + '/' + StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]) + '/metadata.json', fmOpenRead);
 	
 						JMeta := GetJSON(FS);
 						JMetaFound := JMeta.FindPath('notFound');
@@ -364,20 +364,20 @@ begin
 							AxeDatabaseAdd(Entry, True);
 						end;
 	
-						AssignFile(MetaJSON, 'projects/' + ID + '/' + JDate.AsString + '/info.json');
+						AssignFile(MetaJSON, 'projects/' + ID + '/' + StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]) + '/info.json');
 						Rewrite(MetaJSON);
 						Write(MetaJSON, JStr);
 						CloseFile(MetaJSON);
 	
 						WriteLn(StdErr, '[' + ID + '] Got project token');
-						RetValue := AxeProjectGet(ID, JDate.AsString, JToken.AsString);
+						RetValue := AxeProjectGet(ID, StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]), JToken.AsString);
 						if RetValue = 1 then
 						begin
 							JMeta := GetJSON('{}');
 							JObj := JMeta as TJSONObject;
 							JObj.Add('scrapedAt', DateToISO8601(Now()));
 	
-							AssignFile(InfoJSON, 'projects/' + ID + '/' + JDate.AsString + '/metadata.json');
+							AssignFile(InfoJSON, 'projects/' + ID + '/' + StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]) + '/metadata.json');
 							Rewrite(InfoJSON);
 							Write(InfoJSON, JObj.AsJSON);
 							CloseFile(InfoJSON);
@@ -388,7 +388,7 @@ begin
 							JObj := JMeta as TJSONObject;
 							JObj.Add('notFound', true);
 	
-							AssignFile(InfoJSON, 'projects/' + ID + '/' + JDate.AsString + '/metadata.json');
+							AssignFile(InfoJSON, 'projects/' + ID + '/' + StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]) + '/metadata.json');
 							Rewrite(InfoJSON);
 							Write(InfoJSON, JObj.AsJSON);
 							CloseFile(InfoJSON);

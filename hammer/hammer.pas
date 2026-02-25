@@ -14,7 +14,8 @@ uses
 	HammerRoot,
 	HammerData,
 	HammerStatic,
-	HammerInfo;
+	HammerInfo,
+	HammerDatabase;
 
 procedure OnShowRequestException(Res : TResponse; AnException : Exception; var handled : Boolean);
 begin
@@ -45,6 +46,7 @@ begin
 	{$endif}
 
 	HammerInfoDirectory := '';
+	HammerDatabaseConnect(GetEnv('TOOLBOX_SOLR_HOSTNAME'), GetEnv('TOOLBOX_SOLR_PORT'));
 	while I < ParamCount do
 	begin
 		if ParamStr(I) = '--directory' then
