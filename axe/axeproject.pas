@@ -117,6 +117,11 @@ begin
 		except
 			on E : EHTTPClient do
 			begin
+				if AxeUtilityShutdown then
+				begin
+					AxeProjectGet := 3;
+					exit;
+				end;
 				if E.StatusCode = 403 then
 				begin
 					WriteLn(StdErr, '[' + ID + '] Failed to get project.json - getting token again...');
@@ -202,6 +207,12 @@ begin
 			WriteLn(StdErr, '[' + ID + '] Failed to get thumbnail - retrying');
 			HTTP.Free();
 			FS.Free();
+
+			if AxeUtilityShutdown then
+			begin
+				DeleteFile(Dest);
+				exit;
+			end;
 			continue;
 		end;
 		HTTP.Free();
@@ -235,6 +246,10 @@ begin
 			try JStr := TFPHTTPClient.SimpleGet('https://api.scratch.mit.edu/projects/' + ID);
 			except
 				WriteLn(StdErr, '[' + ID + '] Failed to get project token - retrying');
+				if AxeUtilityShutdown then
+				begin
+					exit;
+				end;
 				continue;
 			end;
 			break;
