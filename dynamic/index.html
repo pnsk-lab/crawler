@@ -7,6 +7,8 @@
 		<!--#set var="TITLE" value="Home" -->
 		<!--#elif expr="$PATH_INFO = '/search'" -->
 		<!--#set var="TITLE" value="Search" -->
+		<!--#elif expr="$PATH_INFO = '/project'" -->
+		<!--#set var="TITLE" value="Project" -->
 		<!--#else -->
 		<!--#set var="TITLE" value="Not Found" -->
 		<!--#set var="STATUS_CODE" value="404" -->
@@ -17,6 +19,9 @@
 			<!--#echo var="TITLE" beforenl="false" -->
 		</title>
 		<link rel="stylesheet" href="/static/style.css">
+		<!--#if expr="$TITLE = 'Project'" --->
+		<link rel="stylesheet" href="/static/scratch-player.css">
+		<!--#endif -->
 	</head>
 	<body bgcolor="white" text="black">
 		<a href="https://pnsk-lab.github.io"><img src="/static/group-logo.png" alt="Group Logo" border="0"></a>
@@ -45,6 +50,8 @@
 						<!--#include file="home.html" -->
 						<!--#elif expr="$TITLE = 'Search'" -->
 						<!--#include file="search.html" -->
+						<!--#elif expr="$TITLE = 'Project'" -->
+						<!--#include file="project.html" -->
 						<!--#elif expr="$TITLE = 'Not Found'" -->
 						<!--#include file="404.html" -->
 						<!--#endif -->

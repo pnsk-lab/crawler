@@ -47,6 +47,14 @@ const
 		(
 			Extension: 'css';
 			MIME: 'text/css';
+		),
+		(
+			Extension: 'wav';
+			MIME: 'audio/wav';
+		),
+		(
+			Extension: 'mp3';
+			MIME: 'audio/mpeg';
 		)
 	);
 

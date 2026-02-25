@@ -67,6 +67,7 @@ begin
 					except
 						WriteLn(StdErr, '[' + ID + '] Failed to get ' + JMD5Ext.AsString + ' - retrying');
 						FS.Free();
+						DeleteFile('assets/' + JMD5Ext.AsString);
 						continue;
 					end;
 					FS.Free();
