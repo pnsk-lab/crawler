@@ -13,7 +13,8 @@ uses
 	strutils,
 	fgl,
 	HammerUtility,
-	HammerSearch;
+	HammerSearch,
+	HammerProject;
 
 function ParseCommand(Command : String) : THammerStringArray;
 var
@@ -168,6 +169,10 @@ begin
 	if Req.PathInfo = '/search' then
 	begin
 		HammerSearchProcess(Vars, Query, Req, Res);
+	end
+	else if Req.PathInfo = '/project' then
+	begin
+		HammerProjectProcess(Vars, Query, Req, Res);
 	end;
 
 	SetLength(Stack, 1);

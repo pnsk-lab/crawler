@@ -22,7 +22,7 @@
 				<div class="progress-bar-inner" id="loading-status"></div>
 			</div>
 		</div>
-		<div class="screen error-screen" id="error-screen" hidden>
+		<div class="screen error-screen" id="error-screen" style="display: none;">
 			<h1>Error</h1>
 			<details>
 				<summary id="error-text"></summary>
@@ -34,13 +34,46 @@
 <button type="button" class="download-button" id="download-button" disabled>
 	Download Project
 </button>
+<div class="section">Project information</div>
+<table border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<th width="100">Title</th>
+		<td>
+			<!--#echo var="PROJECT_TITLE" -->
+		</td>
+	</tr>
+	<tr>
+		<th width="100">Author</th>
+		<td>
+			<!--#echo var="PROJECT_AUTHOR" -->
+		</td>
+	</tr>
+	<tr>
+		<th width="100">Description</th>
+		<td width="600">
+			<pre style="overflow: auto; width: 600;">
+<!--#echo var="PROJECT_DESCRIPTION" nonl="true" -->
+</pre>
+		</td>
+	</tr>
+	<tr>
+		<th width="100">Instructions</th>
+		<td width="600">
+			<pre style="overflow: auto; width: 600;">
+<!--#echo var="PROJECT_INSTRUCTIONS" nonl="true" -->
+</pre>
+		</td>
+	</tr>
+</table>
 <script src="https://cdn.jsdelivr.net/npm/@turbowarp/scaffolding@0.2.0/dist/scaffolding-with-music.js"></script>
 <input type="hidden" id="project_id" value="
-<!--#echo var="QUERY_STRING_PROJECT" nonl="true" -->
+<!--#echo var="QUERY_STRING_P" nonl="true" -->
+">
+<input type="hidden" id="timestamp" value="
+<!--#echo var="PROJECT_TIMESTAMP" nonl="true" -->
 ">
 <script>
-	const PROJECT_PATH = document.getElementById("project_id").value + "/2021-12-08T07-15-01.000Z";
-	;
+	const PROJECT_PATH = document.getElementById("project_id").value + "/" + document.getElementById("timestamp").value.replace(/:/g, "-");
 </script>
 <script>
 	// Element def
@@ -75,8 +108,8 @@
 	});
 	// handle launch
 	launchScreen.addEventListener("click", () => {
-		loadingScreen.hidden = true;
-		launchScreen.hidden = true;
+		loadingScreen.style.display = "none";
+		launchScreen.style.display = "none";
 
 		scaffolding.start();
 	});
@@ -164,10 +197,7 @@
 			storage.AssetType.ImageBitmap,
 			storage.AssetType.Sound,
 		],
-		(asset) => {
-			console.log(`${ASSETS_BASE_PATH}/${asset.assetId}.${asset.dataFormat}`);
-			return `${ASSETS_BASE_PATH}/${asset.assetId}.${asset.dataFormat}`
-		}
+		(asset) =>  `${ASSETS_BASE_PATH}/${asset.assetId}.${asset.dataFormat}`
 	);
 	storage.onprogress = (totalAssets, loadedAssets) =>
 		(loadingStatus.style.width = `${totalAssets > 0 ? (loadedAssets / totalAssets) * 100 : 0}%`);
@@ -182,17 +212,17 @@
 		await scaffolding.loadProject(projectData);
 		loadingStatus.style.width = `${100}%`;
 		downloadButton.disabled = false;
-		loadingScreen.hidden = true;
-		launchScreen.hidden = false;
+		loadingScreen.style.display = "none";
+		launchScreen.style.display = "";
 	})().catch((e) => {
 		// error handling
 		console.error(e);
 		errorText.textContent = e;
 		const stack = (e && e.stack) || "no stack";
 		errorStack.textContent = `${stack}\nUser agent: ${navigator.userAgent}`;
-		errorScreen.hidden = false;
-		loadingScreen.hidden = true;
-		launchScreen.hidden = true;
+		errorScreen.style.display = "";
+		loadingScreen.style.display = "none";
+		launchScreen.style.display = "none";
 		downloadButton.disabled = true;
 	});
 </script>
