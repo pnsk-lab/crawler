@@ -10,8 +10,8 @@ procedure HammerSearchProcess(Vars : THammerStringMap; Query : THammerStringMap;
 
 implementation
 uses
-	HammerDatabase,
-	sysutils;
+	sysutils,
+	HammerDatabase;
 
 function GetThumbnail(Entry : THammerDatabaseEntry) : String;
 const

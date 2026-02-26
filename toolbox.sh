@@ -21,6 +21,7 @@ elif [ "x$1" = "xbuild" ]; then
 elif [ "x$1" = "xclean" ]; then
 	exec make clean
 elif [ "x$1" = "xsetup" ]; then
+	F=false
 	if curl -f -X POST -H "Content-Type: application/json" "http://$TOOLBOX_SOLR_HOSTNAME:$TOOLBOX_SOLR_PORT/api/collections" -d '{
 		"name": "toolbox",
 		"numShards": 1,
@@ -28,8 +29,8 @@ elif [ "x$1" = "xsetup" ]; then
 	}' >/dev/null 2>&1; then
 		:
 	else
-		echo "Failed to create collection"
-		exit 1
+		echo "Failed to create collection toolbox"
+		F=true
 	fi
 	if curl -f -X POST -H "Content-Type: application/json" "http://$TOOLBOX_SOLR_HOSTNAME:$TOOLBOX_SOLR_PORT/api/collections/toolbox/schema" -d '{
 		"add-field": [
@@ -45,9 +46,11 @@ elif [ "x$1" = "xsetup" ]; then
 	}' >/dev/null 2>&1; then
 		:
 	else
-		echo "Failed to create schema"
-		exit 1
+		echo "Failed to create schema for collection toolbox"
+		F=true
 	fi
 
-	echo "Created collection/schema successfully!"
+	if $F; then
+		echo "There were some errors while setting up database"
+	fi
 fi

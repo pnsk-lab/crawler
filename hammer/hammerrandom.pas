@@ -10,8 +10,8 @@ procedure HammerRandomProcess(Vars : THammerStringMap; Query : THammerStringMap;
 
 implementation
 uses
-	HammerDatabase,
-	sysutils;
+	sysutils,
+	HammerDatabase;
 
 procedure HammerRandomProcess(Vars : THammerStringMap; Query : THammerStringMap; Req : TRequest; Res : TResponse);
 var

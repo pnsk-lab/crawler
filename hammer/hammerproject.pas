@@ -9,8 +9,8 @@ procedure HammerProjectProcess(Vars : THammerStringMap; Query : THammerStringMap
 
 implementation
 uses
-	HammerDatabase,
-	sysutils;
+	sysutils,
+	HammerDatabase;
 
 procedure HammerProjectProcess(Vars : THammerStringMap; Query : THammerStringMap; Req : TRequest; Res : TResponse);
 var
