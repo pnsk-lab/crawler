@@ -45,6 +45,9 @@ begin
 			JIteration := JIterations.Items[I];
 
 			JMD5Ext := JIteration.FindPath('md5ext');
+			if not(Assigned(JMD5Ext)) then JMD5Ext := JIteration.FindPath('md5');
+			if not(Assigned(JMD5Ext)) then JMD5Ext := JIteration.FindPath('baseLayerMD5');
+
 			if Assigned(JMD5Ext) then
 			begin
 				while true do
@@ -96,6 +99,33 @@ begin
 
 	if (ProjectTarget = 1) and (ProjectTargetIteration(ID, JTarget, 'costumes') = 2) then ProjectTarget := 2;
 	if (ProjectTarget = 1) and (ProjectTargetIteration(ID, JTarget, 'sounds') = 2) then ProjectTarget := 2;
+end;
+
+{
+	1 means it's ok
+	2 means it should be aborted
+}
+function Recursive(ID : String; JData : TJSONData) : Integer;
+var
+	Children : TJSONArray;
+	I : Integer;
+begin
+	Recursive := 1;
+
+	if ProjectTarget(ID, JData) = 2 then
+	begin
+		Recursive := 2;
+		exit;
+	end;
+
+	Children := JData.FindPath('children') as TJSONArray;
+	if Assigned(Children) then
+	begin
+		for I := 0 to Children.Count - 1 do
+		begin
+			Recursive(ID, Children.Items[I]);
+		end;
+	end;
 end;
 
 {
@@ -194,6 +224,17 @@ begin
 				JData.Free();
 				exit;
 			end;
+		end;
+	end
+	else
+	begin
+		{ Probably Scratch 2.x }
+
+		if Recursive(ID, JData) = 2 then
+		begin
+			AxeProjectGet := 3;
+			JData.Free();
+			exit;
 		end;
 	end;
 	
