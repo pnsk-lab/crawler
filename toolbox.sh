@@ -13,7 +13,9 @@ if [ "x$1" = "x" -o "x$1" = "xhelp" ]; then
 elif [ "x$1" = "xaxe" ]; then
 	exec ./axe/axe --directory data "${@:2}"
 elif [ "x$1" = "xhammer" -o "x$1" = "x" ]; then
-	exec ./hammer/hammer --directory data "${@:2}"
+	while true; do
+		./hammer/hammer --directory data "${@:2}"
+	done
 elif [ "x$1" = "xbuild" ]; then
 	exec make PCFLAGS=-dDATABASE
 elif [ "x$1" = "xclean" ]; then
