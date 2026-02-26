@@ -2,21 +2,32 @@
 	<head>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<!--#if expr="$PATH_INFO = '/'" -->
-		<!--#set var="TITLE" value="Home" -->
+			<!--#set var="TITLE" value="Home" -->
 		<!--#elif expr="$PATH_INFO = ''" -->
-		<!--#set var="TITLE" value="Home" -->
+			<!--#set var="TITLE" value="Home" -->
 		<!--#elif expr="$PATH_INFO = '/search'" -->
-		<!--#set var="TITLE" value="Search" -->
+			<!--#set var="TITLE" value="Search" -->
 		<!--#elif expr="$PATH_INFO = '/project'" -->
-		<!--#set var="TITLE" value="Project" -->
+			<!--#set var="TITLE" value="Project" -->
+			<!--#if expr="$PROJECT_AUTHOR = ''" -->
+				<!--#set var="STATUS_CODE" value="404" -->
+			<!--#endif -->
+		<!--#elif expr="$PATH_INFO = '/user'" -->
+			<!--#set var="TITLE" value="User" -->
 		<!--#else -->
-		<!--#set var="TITLE" value="Not Found" -->
-		<!--#set var="STATUS_CODE" value="404" -->
-		<!--#set var="STATUS_TEXT" value="Not Found" -->
+			<!--#set var="STATUS_CODE" value="404" -->
+		<!--#endif -->
+		<!--#if expr="$STATUS_CODE = '404'" -->
+			<!--#set var="TITLE" value="Not Found" -->
+			<!--#set var="STATUS_TEXT" value="Not Found" -->
 		<!--#endif -->
 		<title>
 			Hammer: 
-			<!--#echo var="TITLE" beforenl="false" -->
+			<!--#echo var="TITLE" nonl="true" -->
+			<!--#if expr="$TITLE = 'Project'" -->
+: 
+				<!--#echo var="PROJECT_TITLE" beforenl="false" -->
+			<!--#endif -->
 		</title>
 		<link rel="stylesheet" href="/static/style.css">
 		<!--#if expr="$TITLE = 'Project'" --->
@@ -47,13 +58,15 @@
 				<td valign="top">
 					<div id="content">
 						<!--#if expr="$TITLE = 'Home'" -->
-						<!--#include file="home.html" -->
+							<!--#include file="home.html" -->
 						<!--#elif expr="$TITLE = 'Search'" -->
-						<!--#include file="search.html" -->
+							<!--#include file="search.html" -->
 						<!--#elif expr="$TITLE = 'Project'" -->
-						<!--#include file="project.html" -->
+							<!--#include file="project.html" -->
+						<!--#elif expr="$TITLE = 'User'" -->
+							<!--#include file="user.html" -->
 						<!--#elif expr="$TITLE = 'Not Found'" -->
-						<!--#include file="404.html" -->
+							<!--#include file="404.html" -->
 						<!--#endif -->
 					</div>
 				</td>

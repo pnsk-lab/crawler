@@ -62,3 +62,11 @@ a:hover, #breadcrumb a:hover {
 #content p {
 	padding-left: 8px;
 }
+
+tr.even {
+	background-color: #eeeeee;
+}
+
+tr.odd {
+	background-color: #dddddd;
+}

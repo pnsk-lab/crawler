@@ -129,7 +129,7 @@ var
 	V : Integer;
 	AfterNL : Boolean;
 	BeforeNL : Boolean;
-	Escape : Boolean;
+	Escape : Integer;
 	Query : THammerStringMap;
 begin
 	AssignFile(TF, FileName);
@@ -252,24 +252,31 @@ begin
 					AfterNL := false;
 				end;
 
-				Escape := false;
+				Escape := 0;
 				Param := GetCommandArgument(Arr, 'var');
 				if Param = '' then
 				begin
 					Param := GetCommandArgument(Arr, 'varesc');
 
-					if not(Param = '') then Escape := true;
+					if Param = '' then
+					begin
+						Param := GetCommandArgument(Arr, 'varurl');
+
+						if not(Param = '') then Escape := 2;
+					end
+					else Escape := 1;
 				end;
 
 				if Vars.TryGetData(Param, ParamResult) then
 				begin
-					if Escape then
+					if Escape = 1 then
 					begin
 						ParamResult := StringReplace(ParamResult, '&', '&amp;',  [rfReplaceAll]);
 						ParamResult := StringReplace(ParamResult, '"', '&quot;',  [rfReplaceAll]);
 						ParamResult := StringReplace(ParamResult, '<', '&lt;',  [rfReplaceAll]);
 						ParamResult := StringReplace(ParamResult, '>', '&gt;',  [rfReplaceAll]);
-					end;
+					end
+					else if Escape = 2 then ParamResult := HTTPEncode(ParamResult);
 
 					if not(BeforeNL) and (Copy(HammerSideProcess, Length(HammerSideProcess) - 1, 2) = #13#10) then
 					begin

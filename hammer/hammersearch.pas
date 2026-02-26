@@ -64,17 +64,28 @@ begin
 		S := S + '		<table border="0" cellspacing="0" cellpadding="0" width="100%" height="100%">' + #13#10;
 		S := S + '			<tr height="150">' + #13#10;
 		S := S + '				<td valign="top" align="center">' + #13#10;
-		S := S + '					<a href="/project?p=' + IntToStr(R[I].ProjectID) + '"><img src="/data/' + GetThumbnail(R[I]) + '" alt="Thumbnail" width="200px"></a>' + #13#10;
+		S := S + '					<a href="/project?p=' + IntToStr(R[I].ProjectID) + '"><img src="/data/' + GetThumbnail(R[I]) + '" alt="Thumbnail" width="200px" border="0"></a>' + #13#10;
 		S := S + '				</td>' + #13#10;
 		S := S + '			</tr>' + #13#10;
 		S := S + '			<tr>' + #13#10;
 		S := S + '				<td align="center">' + #13#10;
-		S := S + '					<a href="/project?p=' + IntToStr(R[I].ProjectID) + '">' + R[I].Title + '</a>' + #13#10;
+		S := S + '					<a href="/project?p=' + IntToStr(R[I].ProjectID) + '">' + R[I].Title + '</a><br>' + #13#10;
+		S := S + '				</td>' + #13#10;
+		S := S + '			</tr>' + #13#10;
+		S := S + '			<tr>' + #13#10;
+		S := S + '				<td align="center" valign="bottom">' + #13#10;
+		S := S + '					By <a href="/user?u=' + HTTPEncode(R[I].AuthorName) + '">' + R[I].AuthorName + '</a>' + #13#10;
 		S := S + '				</td>' + #13#10;
 		S := S + '			</tr>' + #13#10;
 		S := S + '		</table>' + #13#10;
 		S := S + '	</td>' + #13#10;
-		if ((I mod 4) = 3) then S := S + '</tr>' + #13#10;
+		if ((I mod 4) = 3) then
+		begin
+			S := S + '</tr>' + #13#10;
+			S := S + '<tr>' + #13#10;
+			S := S + '	<td colspan="4" height="10"></td>' + #13#10;
+			S := S + '</tr>' + #13#10;
+		end;
 	end;
 	for I := (I mod 4) + 1 to 3 do S := S + '<td width="25%"></td>' + #13#10;
 	if not((I mod 4) = 3) then S := S + '</tr>' + #13#10;
