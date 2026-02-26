@@ -108,7 +108,7 @@ function AxeProjectGet(ID : String; DT : String; Token: String) : Integer;
 var
 	JStr : String;
 	JData, JTargets, JTarget : TJSONData;
-	ProjectJSON : TextFile;
+	ProjectJSON, ProjectSB : TextFile;
 	I : Integer;
 begin
 	AxeProjectGet := 1;
@@ -145,6 +145,20 @@ begin
 	try
 		JData := GetJSON(JStr, false);
 	except
+		if Copy(JStr, 1, 10) = 'ScratchV02' then
+		begin
+			AxeProjectGet := 1;
+
+			WriteLn(StdErr, '[' + ID + '] Got project.sb');
+
+			AssignFile(ProjectSB, 'projects/' + ID + '/' + DT + '/project.sb');
+			Rewrite(ProjectSB);
+			Write(ProjectSB, JStr);
+			CloseFile(ProjectSB);
+
+			exit;
+		end;
+
 		AxeProjectGet := 0;
 		exit;
 	end;

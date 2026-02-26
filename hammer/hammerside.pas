@@ -14,7 +14,9 @@ uses
 	fgl,
 	HammerUtility,
 	HammerSearch,
-	HammerProject;
+	HammerProject,
+	HammerUser,
+	HammerRandom;
 
 function ParseCommand(Command : String) : THammerStringArray;
 var
@@ -173,6 +175,14 @@ begin
 	else if Req.PathInfo = '/project' then
 	begin
 		HammerProjectProcess(Vars, Query, Req, Res);
+	end
+	else if Req.PathInfo = '/user' then
+	begin
+		HammerUserProcess(Vars, Query, Req, Res);
+	end
+	else if Req.PathInfo = '/random' then
+	begin
+		HammerRandomProcess(Vars, Query, Req, Res);
 	end;
 
 	SetLength(Stack, 1);
@@ -296,7 +306,7 @@ begin
 				HammerSideProcess := HammerSideProcess + HammerSideProcess(Req, Res, ExtractFilePath(FileName) + GetCommandArgument(Arr, 'file'));
 			end;
 		end
-		else
+		else if Stack[Length(Stack) - 1] = 1 then
 		begin
 			HammerSideProcess := HammerSideProcess + Lines[I] + #13#10;
 		end;

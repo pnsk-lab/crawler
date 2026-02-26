@@ -21,6 +21,7 @@ procedure HammerDatabaseConnect(HostName : String; Port : String);
 function HammerDatabaseQuery(Project : Integer; Offset : Integer = 0) : THammerDatabaseEntryArray;
 function HammerDatabaseQuery(Query : String; Offset : Integer = 0) : THammerDatabaseEntryArray;
 function HammerDatabaseQueryUserName(UserName : String; Offset : Integer = 0) : THammerDatabaseEntryArray;
+function HammerDatabaseQueryRandom() : THammerDatabaseEntryArray;
 
 implementation
 uses
@@ -29,7 +30,8 @@ uses
 	fpjson,
 	jsonparser,
 	classes,
-	sysutils;
+	sysutils,
+	dateutils;
 
 var
 	DBHostName : String;
@@ -248,6 +250,31 @@ begin
 
 	JData := GetJSON(JStr, false);
 	HammerDatabaseQueryUserName := JSONToRecord(JData);
+	JData.Free();
+end;
+
+function HammerDatabaseQueryRandom() : THammerDatabaseEntryArray;
+var
+	JStr : String;
+	JData : TJSONData;
+	JObj : TJSONObject;
+begin
+	HammerDatabaseQueryRandom := [];
+
+	JData := GetJSON('{}');
+	JObj := JData as TJSONObject;
+
+	JObj.Add('query', '*:*');
+	JObj.Add('limit', 1);
+	JObj.Add('offset', 0);
+	JObj.Add('sort', 'random_' + IntToStr(DateTimeToUnix(Now())) + ' desc');
+
+	JStr := SendJSON(JData);
+
+	JData.Free();
+
+	JData := GetJSON(JStr, false);
+	HammerDatabaseQueryRandom := JSONToRecord(JData);
 	JData.Free();
 end;
 

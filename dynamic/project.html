@@ -211,10 +211,20 @@
 	(async () => {
 		scaffolding.appendTo(player);
 
-		const response = await fetch(
-			`${PROJECTS_BASE_PATH}/${PROJECT_PATH}/project.json`,
+		let response = await fetch(
+			`${PROJECTS_BASE_PATH}/${PROJECT_PATH}/project.json`
 		);
-		const projectData = await response.json();
+		let projectData;
+		if(response.ok) {
+			projectData = await response.json();
+		} else {
+			// assume it's sb
+
+			response = await fetch(
+				`${PROJECTS_BASE_PATH}/${PROJECT_PATH}/project.sb`
+			);
+			projectData = await response.arrayBuffer();
+		}
 		await scaffolding.loadProject(projectData);
 		loadingStatus.style.width = `${100}%`;
 		downloadButton.disabled = false;
