@@ -37,7 +37,7 @@ begin
 
 	AxeUtilityShutdown := false;
 
-	while I < ParamCount do
+	while I <= ParamCount do
 	begin
 		if ParamStr(I) = '--user' then
 		begin
