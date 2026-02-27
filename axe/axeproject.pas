@@ -161,6 +161,7 @@ begin
 				end
 				else
 				begin
+					WriteLn(StdErr, '[' + ID + '] Failed to get project.json - this is most likely unrecoverable error...');
 					AxeProjectGet := 0;
 					exit;
 				end;
