@@ -92,8 +92,8 @@ begin
 	begin
 		for I := (O mod 4) + 1 to 3 do S := S + '<td width="25%"></td>' + #13#10;
 		if not((O mod 4) = 3) then S := S + '</tr>' + #13#10;
+		Vars['SEARCH_RESULT'] := S;
 	end;
-	Vars['SEARCH_RESULT'] := S;
 
 	S2 := '';
 	if Length(R) > 0 then
