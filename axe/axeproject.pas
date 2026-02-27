@@ -138,7 +138,7 @@ function AxeProjectGet(ID : String; DT : String; Token: String) : Integer;
 var
 	JStr : String;
 	JData, JTargets, JTarget : TJSONData;
-	ProjectJSON, ProjectSB : TextFile;
+	ProjectJSON, ProjectSB, ProjectSB2 : TextFile;
 	I : Integer;
 begin
 	AxeProjectGet := 1;
@@ -185,6 +185,19 @@ begin
 			Rewrite(ProjectSB);
 			Write(ProjectSB, JStr);
 			CloseFile(ProjectSB);
+
+			exit;
+		end
+		else if Copy(JStr, 1, 2) = 'PK' then
+		begin
+			AxeProjectGet := 1;
+
+			WriteLn(StdErr, '[' + ID + '] Got project.sb2');
+
+			AssignFile(ProjectSB2, 'projects/' + ID + '/' + DT + '/project.sb2');
+			Rewrite(ProjectSB2);
+			Write(ProjectSB2, JStr);
+			CloseFile(ProjectSB2);
 
 			exit;
 		end;

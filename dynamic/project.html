@@ -224,11 +224,17 @@
 		if(response.ok) {
 			projectData = await response.json();
 		} else {
-			// assume it's sb
-
+			// sb
 			response = await fetch(
 				`${PROJECTS_BASE_PATH}/${PROJECT_PATH}/project.sb`
 			);
+			if(!response.ok){
+				// sb2, probably...
+				response = await fetch(
+					`${PROJECTS_BASE_PATH}/${PROJECT_PATH}/project.sb2`
+				);
+			}
+
 			projectData = await response.arrayBuffer();
 		}
 		await scaffolding.loadProject(projectData);
