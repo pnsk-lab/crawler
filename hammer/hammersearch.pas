@@ -99,8 +99,8 @@ begin
 
 		if P > 1 then
 		begin
-			S2 := S2 + '<a href="?q=' + HTTPEncode(Q) + '&p=' + IntToStr(1) + '">&lt;&lt;</a> ';
-			S2 := S2 + '<a href="?q=' + HTTPEncode(Q) + '&p=' + IntToStr(P - 1) + '">&lt;</a> ';
+			S2 := S2 + '<a href="?q=' + HTTPEncode(Q) + '&amp;p=' + IntToStr(1) + '">&lt;&lt;</a> ';
+			S2 := S2 + '<a href="?q=' + HTTPEncode(Q) + '&amp;p=' + IntToStr(P - 1) + '">&lt;</a> ';
 		end;
 
 		for I := 1 to Pages do
@@ -111,14 +111,14 @@ begin
 			end
 			else
 			begin
-				S2 := S2 + ' <a href="?q=' + HTTPEncode(Q) + '&p=' + IntToStr(I) + '">' + IntToStr(I) + '</a> ';
+				S2 := S2 + ' <a href="?q=' + HTTPEncode(Q) + '&amp;p=' + IntToStr(I) + '">' + IntToStr(I) + '</a> ';
 			end;
 		end;
 
 		if P < Pages then
 		begin
-			S2 := S2 + ' <a href="?q=' + HTTPEncode(Q) + '&p=' + IntToStr(P + 1) + '">&gt;</a>';
-			S2 := S2 + ' <a href="?q=' + HTTPEncode(Q) + '&p=' + IntToStr(Pages) + '">&gt;&gt;</a>';
+			S2 := S2 + ' <a href="?q=' + HTTPEncode(Q) + '&amp;p=' + IntToStr(P + 1) + '">&gt;</a>';
+			S2 := S2 + ' <a href="?q=' + HTTPEncode(Q) + '&amp;p=' + IntToStr(Pages) + '">&gt;&gt;</a>';
 		end;
 	end;
 	Vars['SEARCH_PAGES'] := S2;

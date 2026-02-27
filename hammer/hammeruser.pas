@@ -52,7 +52,7 @@ begin
 
 		if FileExists(Path) then
 		begin
-			GetIcon := HammerInfoDirectory + '/users/' + User + '/icon.' + TryThem[I];
+			GetIcon := 'users/' + User + '/icon.' + TryThem[I];
 			exit;
 		end;
 	end;
@@ -135,8 +135,8 @@ begin
 
 		if P > 1 then
 		begin
-			S2 := S2 + '<a href="?u=' + HTTPEncode(U) + '&p=' + IntToStr(1) + '">&lt;&lt;</a> ';
-			S2 := S2 + '<a href="?u=' + HTTPEncode(U) + '&p=' + IntToStr(P - 1) + '">&lt;</a> ';
+			S2 := S2 + '<a href="?u=' + HTTPEncode(U) + '&amp;p=' + IntToStr(1) + '">&lt;&lt;</a> ';
+			S2 := S2 + '<a href="?u=' + HTTPEncode(U) + '&amp;p=' + IntToStr(P - 1) + '">&lt;</a> ';
 		end;
 
 		for I := 1 to Pages do
@@ -153,8 +153,8 @@ begin
 
 		if P < Pages then
 		begin
-			S2 := S2 + ' <a href="?u=' + HTTPEncode(U) + '&p=' + IntToStr(P + 1) + '">&gt;</a>';
-			S2 := S2 + ' <a href="?u=' + HTTPEncode(U) + '&p=' + IntToStr(Pages) + '">&gt;&gt;</a>';
+			S2 := S2 + ' <a href="?u=' + HTTPEncode(U) + '&amp;p=' + IntToStr(P + 1) + '">&gt;</a>';
+			S2 := S2 + ' <a href="?u=' + HTTPEncode(U) + '&amp;p=' + IntToStr(Pages) + '">&gt;&gt;</a>';
 		end;
 	end;
 	Vars['USER_PAGES'] := S2;
