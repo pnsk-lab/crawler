@@ -116,6 +116,11 @@ begin
 			Client.Free();
 			continue;
 		end;
+		if not(Client.ResponseStatusCode = 200) then
+		begin
+			Client.Free();
+			continue;
+		end;
 		Client.Free();
 		break;
 	end;
