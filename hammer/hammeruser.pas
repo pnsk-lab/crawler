@@ -108,7 +108,7 @@ begin
 			S := S + '</tr>' + #13#10;
 		end;
 	end;
-	O := I;
+	O := Length(R) - 1;
 	if O > 0 then
 	begin
 		for I := (O mod 4) + 1 to 3 do S := S + '<td width="25%"></td>' + #13#10;
