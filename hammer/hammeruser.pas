@@ -62,7 +62,7 @@ procedure HammerUserProcess(Vars : THammerStringMap; Query : THammerStringMap; R
 var
 	U : String;
 	R : THammerDatabaseEntryArray;
-	I, P : Integer;
+	I, P, O : Integer;
 	S, S2 : String;
 	Pages : Integer;
 	FS : TFileStream;
