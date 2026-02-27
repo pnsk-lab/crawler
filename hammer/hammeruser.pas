@@ -147,7 +147,7 @@ begin
 			end
 			else
 			begin
-				S2 := S2 + ' <a href="?u=' + HTTPEncode(U) + '&p=' + IntToStr(I) + '">' + IntToStr(I) + '</a> ';
+				S2 := S2 + ' <a href="?u=' + HTTPEncode(U) + '&amp;p=' + IntToStr(I) + '">' + IntToStr(I) + '</a> ';
 			end;
 		end;
 
