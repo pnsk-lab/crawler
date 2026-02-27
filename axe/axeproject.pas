@@ -161,8 +161,8 @@ begin
 				end
 				else
 				begin
-					WriteLn(StdErr, '[' + ID + '] Failed to get project.json - retrying');
-					continue;
+					AxeProjectGet := 0;
+					exit;
 				end;
 			end;
 			on E : Exception do
