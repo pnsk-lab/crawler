@@ -268,19 +268,25 @@ var
 	JStr : String;
 	JData : TJSONData;
 	JObj : TJSONObject;
+	JArr : TJSONArray;
 begin
 	HammerDatabaseQueryRandom := [];
 
 	JData := GetJSON('{}');
 	JObj := JData as TJSONObject;
 
+	JArr := GetJSON('[]') as TJSONArray;
+	JArr.Add('not_found:false');
+
 	JObj.Add('query', '*:*');
 	JObj.Add('limit', 1);
 	JObj.Add('offset', 0);
 	JObj.Add('sort', 'random_' + IntToStr(Random(DateTimeToUnix(Now()))) + ' desc');
+	JObj.Add('filter', JArr);
 
 	JStr := SendJSON(JData);
 
+	JArr.Free();
 	JData.Free();
 
 	JData := GetJSON(JStr, false);

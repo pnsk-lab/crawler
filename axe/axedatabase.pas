@@ -11,6 +11,7 @@ type
 		AuthorName : String;
 		Timestamp : String;
 		SharedTimestamp : String;
+		NotFound : Boolean;
 	end;
 
 procedure AxeDatabaseConnect(HostName : String; Port : String);
@@ -103,6 +104,7 @@ begin
 	JObj.Add('author_search_name', Entry.AuthorName);
 	JObj.Add('timestamp', Entry.Timestamp);
 	JObj.Add('shared_timestamp', Entry.SharedTimestamp);
+	JObj.Add('not_found', Entry.NotFound);
 
 	while true do
 	begin

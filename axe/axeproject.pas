@@ -434,11 +434,6 @@ begin
 	
 					if not(Skip) then
 					begin
-						if N = 7 then
-						begin
-							AxeDatabaseAdd(Entry, True);
-						end;
-	
 						AssignFile(MetaJSON, 'projects/' + ID + '/' + StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]) + '/info.json');
 						Rewrite(MetaJSON);
 						Write(MetaJSON, JStr);
@@ -446,6 +441,18 @@ begin
 	
 						WriteLn(StdErr, '[' + ID + '] Got project token');
 						RetValue := AxeProjectGet(ID, StringReplace(JDate.AsString, ':', '-', [rfReplaceAll]), JToken.AsString);
+
+						Entry.NotFound := false;
+						if RetValue = 0 then
+						begin
+							Entry.NotFound := true;
+						end;
+
+						if N = 7 then
+						begin
+							AxeDatabaseAdd(Entry, True);
+						end;
+
 						if RetValue = 1 then
 						begin
 							JMeta := GetJSON('{}');
